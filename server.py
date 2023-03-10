@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 # Copyright 2013 Abram Hindle
+# Copyright 2023 Omar Niazie
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,27 +75,38 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    return None
+    # https://www.tutorialspoint.com/flask/flask_redirect_and_errors.htm
+    return flask.redirect('static/index.html')
 
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
-    return None
+    data = flask_post_json()
+    # print(data)
+    # print(data.keys())
+    for key in data.keys():
+        myWorld.update(entity, key, data[key])
+    # https://tedboy.github.io/flask/generated/flask.jsonify.html
+    return flask.jsonify(myWorld.get(entity))
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
-    return None
+    # https://tedboy.github.io/flask/generated/flask.jsonify.html
+    return flask.jsonify(myWorld.world())
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-    return None
+    # https://tedboy.github.io/flask/generated/flask.jsonify.html
+    return flask.jsonify(myWorld.get(entity))
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
-    return None
+    # https://tedboy.github.io/flask/generated/flask.jsonify.html
+    myWorld.clear();
+    return flask.jsonify(myWorld.world())
 
 if __name__ == "__main__":
     app.run()
